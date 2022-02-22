@@ -25,23 +25,18 @@ bool CProblem::bLoad(std::string sSourcePath) {
 	
 	if (stream.good())
 	{
-		vector<string>* lines = new vector<string>;
-		(*lines).push_back("");
-		(*lines).push_back("");
-
-		sFile = sSourcePath;
+		string line = "";
 
 		do
 		{
-			getline(stream, (*lines)[0]);
-			getline(stream, (*lines)[1]);
+			getline(stream, line);
 
-			if ((*lines)[0] != "" && (*lines)[1] != "")
-				allClauses.push_back(pcExtractNumbers(lines));
+
+			if (line != "" )
+				allClauses.push_back(pcExtractNumbers(line));
 			
-		} while ((*lines)[0] != "" && (*lines)[1] != "");
+		} while (line != "");
 
-		delete lines;
 		vGetNumberVariables();
 
 		return true;
@@ -50,23 +45,21 @@ bool CProblem::bLoad(std::string sSourcePath) {
 	return false;
 }
 
-CClause* CProblem::pcExtractNumbers(vector<string>* line)
+CClause* CProblem::pcExtractNumbers(string line)
 {
 	CClause* clause = new CClause();
 	string number = "";
 
-	for (int j = 0; j < line->size(); j++)
-	{
 
-		for (int i = 0; i < (*line)[j].length(); i++)
+		for (int i = 0; i < line.length(); i++)
 		{
 
-			if ((*line)[j][i] == '-')
+			if (line[i] == '-')
 			{
 				i++;
-				while (isdigit((*line)[j][i]))
+				while (isdigit(line[i]))
 				{
-					number += (*line)[j][i];
+					number += line[i];
 					i++;
 				}
 				clause->addVar(new CVariable(stoi(number), true));
@@ -74,18 +67,17 @@ CClause* CProblem::pcExtractNumbers(vector<string>* line)
 			}
 
 
-			if (isdigit((*line)[j][i]))
+			if (isdigit(line[i]))
 			{
-				while (isdigit((*line)[j][i]))
+				while (isdigit(line[i]))
 				{
-					number += (*line)[j][i];
+					number += line[i];
 					i++;
 				}
 				clause->addVar(new CVariable(stoi(number), false));
 				number = "";
 			}
 		}
-	}
 
 	return clause;
 }
